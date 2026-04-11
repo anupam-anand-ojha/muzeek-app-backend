@@ -51,6 +51,8 @@ const createMusic = async (req, res) => {
 
 }
 
+// get all songs 
+
 const getAllMusic = async(req, res) => {
     try{
      const songs = await musicModel.find().populate("artist", "username");
