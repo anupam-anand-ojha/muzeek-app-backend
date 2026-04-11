@@ -6,7 +6,7 @@ const router = express.Router()
 const upload = multer()
 
 router.post('/upload',upload.fields([{name: "song", maxcount: 1},{name: "image", maxcount: 1}]), musicController.createMusic);
-router.post('/', musicController.getAllMusic)
+router.get('/', musicController.getAllMusic)
 
 
 export default router
