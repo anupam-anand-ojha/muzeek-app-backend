@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     username:{
         type: String,
+        unique:[true, "Plese enter unique username"],
         require: [true, "Please enter your username"]
 
     },
