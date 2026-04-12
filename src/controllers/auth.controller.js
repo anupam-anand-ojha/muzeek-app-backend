@@ -4,10 +4,10 @@ import jwt from "jsonwebtoken";
 
 const registerUser = async (req,res) => {
     
-        const{useranme,email,password,role="user"} = req.body;
+        const{username,email,password,role="user"} = req.body;
         console.log("user registered sucessfully");
 
-        const isUserAlreadyExist = userModel.findOne({
+        const isUserAlreadyExist = await userModel.findOne({
             $or:[
                 {username},
                 {email}
@@ -15,8 +15,8 @@ const registerUser = async (req,res) => {
         })
 
         if(isUserAlreadyExist){
-            return res.status(409).json({message:"user already exist"}),
             console.log("user already exist")
+            return res.status(401).json({message:"user already exist"})
         }
         
         const hash = await bcrypt.hash(password, 10)
@@ -31,12 +31,12 @@ const registerUser = async (req,res) => {
         const token = jwt.sign({id:user._id, role:user.role}, process.env.JWT_SECRET);
         res.cookie("token", token);
 
-        res.status(201).json({message: "user created sucessfully"}),
-        console.log("user created")
+        res.status(201).json({message: "user created sucessfully"})
 
     
 }
-
+ //login setup
+ 
 const login = async(req,res) =>{
     const {username, email, password, role} = req.body;
 
@@ -47,14 +47,14 @@ const login = async(req,res) =>{
         ]
     })
     if(!user){
-        return res.status(409).json({message:"user inalid"}),
         console.log("user not found")
+        return res.status(404).json({message:"user inalid"})
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if(!isPasswordValid){
-        return res.status(409).json({message:"invalid password"})
+        return res.status(401).json({message:"invalid password"})
        
     }
     

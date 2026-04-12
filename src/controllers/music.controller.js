@@ -10,18 +10,18 @@ const createMusic = async (req, res) => {
     }
 
     try{
-        const decoded = jwt.verify(token, process.env,JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         if(decoded.role !== "artist"){
             return res.status(409).json({message: "you are not allow to create music"});
         }
         
         const {title} = req.body;
-        const songFile = req.body.song;
-        const imageFile = req.body.image;
+        const songFile = req.files.song[0];
+        const imageFile = req.files.image[0];
 
         if(!songFile|| !imageFile){
-            return res.status.json({message: "song and image both field required"});
+            return res.status(409).json({message: "song and image both field required"});
         }
 
         const songUpload = await uploadFiles(songFile.buffer)

@@ -6,7 +6,7 @@ const imageKitClient = new ImageKit({
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 })
 
-const uploadFiles = async (file) => {
+  export const uploadFiles = async (file) => {
     const result = await imageKitClient.upload({
         file,
         fileName: "music" +Date.now(),
@@ -16,5 +16,4 @@ const uploadFiles = async (file) => {
 
 }
 
-export default {uploadFiles}
 
