@@ -6,7 +6,7 @@ import musicRoutes from "./routes/music.routes.js"
 
 const app = express();
 app.use(cors({
-     origin: "http://localhost:5173",
+     origin: "https://playmuzeek.vercel.app",
   credentials: true
 }));
 
