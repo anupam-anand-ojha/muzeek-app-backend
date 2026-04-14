@@ -24,8 +24,8 @@ const createMusic = async (req, res) => {
             return res.status(400).json({message: "song and image both field required"});
         }
 
-       const songUpload = await uploadFiles(songFile.buffer.toString("base64"))
-       const imageUpload = await uploadFiles(imageFile.buffer.toString("base64"))
+      const songUpload = await uploadFiles(songFile)
+      const imageUpload = await uploadFiles(imageFile)
 
 
 

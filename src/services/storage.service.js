@@ -6,14 +6,16 @@ const imageKitClient = new ImageKit({
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 })
 
-  export const uploadFiles = async (file) => {
+export const uploadFiles = async (file) => {
+  try {
     const result = await imageKitClient.upload({
-        file,
-        fileName: "music" +Date.now(),
-        folder:"/back/music"
-    })
-    return result
+      file: file.buffer,
+      fileName: file.originalname,
+    });
 
-}
-
-
+    return result;
+  } catch (err) {
+    console.log("ImageKit Upload Error:", err);
+    throw err;
+  }
+};
