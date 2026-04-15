@@ -1,6 +1,5 @@
 import musicModel from "../models/music.model.js";
-import jwt from "jsonwebtoken"
-import {uploadFiles} from "../services/storage.service.js"
+import jwt from "jsonwebtoken";
 
 const createMusic = async (req, res) => {
     const token = req.cookies.token;
@@ -13,47 +12,32 @@ const createMusic = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         if(decoded.role !== "artist"){
-            return res.status(409).json({message: "you are not allow to create music"});
+            return res.status(409).json({message: "not allowed"});
         }
         
-        const {title} = req.body;
-       const songFile = req.files?.song?.[0];
-       const imageFile = req.files?.image?.[0];
+        const {title, songUrl, imageUrl} = req.body;
 
-        if(!songFile|| !imageFile){
-            return res.status(400).json({message: "song and image both field required"});
+        if(!songUrl || !imageUrl){
+            return res.status(400).json({message: "urls required"});
         }
 
-      const songUpload = await uploadFiles(songFile)
-      const imageUpload = await uploadFiles(imageFile)
-
-
-
         const music = await musicModel.create({
-            
-            url: songUpload.url,
-            image: imageUpload.url,
             title,
+            url: songUrl,
+            image: imageUrl,
             artist: decoded.id
-            
-        })
-            res.status(201).json({
+        });
+
+        res.status(201).json({
             message: "music created successfully",
             music
-        })
+        });
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: "error"});
     }
-    catch (error) {
-        console.log(error)
-        return res.status(401).json({
-            message: "user invalid",
-            error
-        })
-    }
-
-}
-
-// get all songs 
+};
 
 const getAllMusic = async(req, res) => {
     try{
@@ -61,10 +45,8 @@ const getAllMusic = async(req, res) => {
      res.status(200).json(songs)
     }
     catch(err){
-        return res.status(404).json({message: "user invalid", err})
-
+        return res.status(404).json({message: "error", err})
     }
 }
-
 
 export default {createMusic, getAllMusic}
