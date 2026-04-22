@@ -1,21 +1,31 @@
-import ImageKit from "imagekit"
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
 
-const imageKitClient = new ImageKit({
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
-})
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const uploadFiles = async (file) => {
   try {
-    const result = await imageKitClient.upload({
-      file: file.buffer,
-      fileName: file.originalname,
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "uploads", // optional
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(stream);
     });
 
     return result;
   } catch (err) {
-    console.log("ImageKit Upload Error:", err);
+    console.log("Cloudinary Upload Error:", err);
     throw err;
   }
 };
